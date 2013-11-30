@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.levels.dao.UserSessionDao;
-import com.levels.exception.InvalidParameterException;
 import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 import com.levels.service.DateProvider;
@@ -41,16 +40,9 @@ class LoginServiceDefaultImpl implements LoginService {
 
     @Override
     public String loginUser(int userId) {
-        assertPositiveUserId(userId);
         UserSession userSession = new UserSession(keyGenerator.generateUniqueKey(), dateProvider.getCurrentDate());
         userSessionDao.saveOrUpdate(userId, userSession);
         return userSession.getKey();
-    }
-
-    private void assertPositiveUserId(int userId) {
-        if (userId < 0) {
-            throw new InvalidParameterException("Expected unsigned (positive) 31bit integer, got negative integer: " + userId);
-        }
     }
 
     @Override

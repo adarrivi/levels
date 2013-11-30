@@ -14,7 +14,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.levels.dao.UserSessionDao;
-import com.levels.exception.InvalidParameterException;
 import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 import com.levels.service.DateProvider;
@@ -50,13 +49,6 @@ public class LoginServiceDefaultImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    public void loginUser_NegativeUser_ThrowsEx() {
-        expectedException.expect(InvalidParameterException.class);
-        givenUserId(-USER_ID);
-        whenLoginUser();
     }
 
     private void givenUserId(int givenUserId) {

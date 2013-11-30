@@ -5,16 +5,30 @@ import com.levels.dao.UserSessionDao;
 public class DaoSingletonFactory {
 
     private static final int MAX_SESSIONS_ALLOWED = 10000;
+    private static final int MAX_LEVELS_ALLOWED = 10000;
+    private static final int MAX_SCORES_PER_LEVEL = 15;
     private static final DaoSingletonFactory INSTANCE = new DaoSingletonFactory();
 
     private UserSessionDaoInMemory USER_SESSION_DAO = new UserSessionDaoInMemory();
+    private LevelScoreDaoInMemory LEVEL_SCORE_DAO = new LevelScoreDaoInMemory();
 
     public static DaoSingletonFactory getInstance() {
         return INSTANCE;
     }
 
     private DaoSingletonFactory() {
+        setUpUserDao();
+        setUpLevelScoreDao();
+    }
+
+    private void setUpUserDao() {
         USER_SESSION_DAO.setMaxUserSessionAllowed(MAX_SESSIONS_ALLOWED);
+    }
+
+    private void setUpLevelScoreDao() {
+        LEVEL_SCORE_DAO.setMaxHighScoresPerLevel(MAX_SCORES_PER_LEVEL);
+        LEVEL_SCORE_DAO.setMaxLevels(MAX_LEVELS_ALLOWED);
+
     }
 
     public UserSessionDao getUserSessionDao() {

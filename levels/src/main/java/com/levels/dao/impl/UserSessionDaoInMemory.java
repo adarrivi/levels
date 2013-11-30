@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.levels.dao.UserSessionDao;
-import com.levels.exception.MaxSessionsReachedException;
+import com.levels.exception.MaxMemoryReachedException;
 import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 
@@ -33,7 +33,7 @@ class UserSessionDaoInMemory implements UserSessionDao {
 
     private void assertSpaceEnoughInSessionMap() {
         if (sessionMap.size() >= maxUserSessionAllowed) {
-            throw new MaxSessionsReachedException("Maximum sessions in memory reached: " + maxUserSessionAllowed);
+            throw new MaxMemoryReachedException("Maximum sessions in memory reached: " + maxUserSessionAllowed);
         }
     }
 

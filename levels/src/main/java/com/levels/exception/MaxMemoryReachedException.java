@@ -1,10 +1,10 @@
 package com.levels.exception;
 
-public class MaxSessionsReachedException extends RuntimeException {
+public class MaxMemoryReachedException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public MaxSessionsReachedException(String message) {
+    public MaxMemoryReachedException(String message) {
         super(message);
     }
 
