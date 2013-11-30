@@ -65,4 +65,11 @@ public class HttpHighScoreServerIntegrationTest {
         expectedException.expectMessage("Server returned HTTP response code: 400");
     }
 
+    @Test
+    public void testHighScoreConnection() throws IOException {
+        String result = connect("http://localhost:8081/1/highscorelist");
+        Assert.assertEquals("", result);
+
+    }
+
 }

@@ -94,4 +94,14 @@ public class LevelScoreDaoInMemoryTest {
         level = aLevel;
     }
 
+    @Test
+    public void getHighScoreListPerLevel_EmptyLevel_ReturnsEmpty() {
+        givenMaxLevels(0);
+        whenGetHighScoreListPerLevel();
+        thenHighScoresShouldBeEmpty();
+    }
+
+    private void thenHighScoresShouldBeEmpty() {
+        Assert.assertTrue(highScoreList.isEmpty());
+    }
 }

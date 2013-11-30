@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.levels.dao.UserSessionDao;
+import com.levels.exception.InvalidParameterException;
 import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 import com.levels.service.DateProvider;
@@ -110,9 +111,9 @@ public class LoginServiceDefaultImplTest {
 
     @Test
     public void getValidUserIdSessionByKey_NoSessionFound_ReturnsNull() {
+        expectedException.expect(InvalidParameterException.class);
         givenNoSessionFound();
         whenGetValidUserIdSessionByKey();
-        thenSessionShouldBe(null);
     }
 
     private void givenNoSessionFound() {
@@ -129,9 +130,9 @@ public class LoginServiceDefaultImplTest {
 
     @Test
     public void getValidUserIdSessionByKey_SessionExpired_ReturnsNull() {
+        expectedException.expect(InvalidParameterException.class);
         givenExpiredSession(true);
         whenGetValidUserIdSessionByKey();
-        thenSessionShouldBe(null);
     }
 
     private void givenExpiredSession(boolean expired) {

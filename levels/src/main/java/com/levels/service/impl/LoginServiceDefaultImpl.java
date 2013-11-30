@@ -1,9 +1,7 @@
 package com.levels.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.levels.dao.UserSessionDao;
+import com.levels.exception.InvalidParameterException;
 import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 import com.levels.service.DateProvider;
@@ -11,8 +9,6 @@ import com.levels.service.KeyGenerator;
 import com.levels.service.LoginService;
 
 class LoginServiceDefaultImpl implements LoginService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LoginServiceDefaultImpl.class);
 
     private DateProvider dateProvider;
     private KeyGenerator keyGenerator;
@@ -49,12 +45,10 @@ class LoginServiceDefaultImpl implements LoginService {
     public UserIdSessionDto getValidUserIdSessionByKey(String key) {
         UserIdSessionDto userSessionDto = userSessionDao.findUserSessionDtoBySessionKey(key);
         if (userSessionDto == null) {
-            LOG.debug("No sessions found for the key {}", key);
-            return null;
+            throw new InvalidParameterException("No session found for the key " + key);
         }
         if (userSessionDto.hasExpired(dateProvider.getCurrentDate())) {
-            LOG.debug("Session for user {} found, but has expired", userSessionDto.getUserId());
-            return null;
+            throw new InvalidParameterException("The session key has expired");
         }
         return userSessionDto;
     }

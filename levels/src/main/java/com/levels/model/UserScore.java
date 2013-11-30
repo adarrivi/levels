@@ -1,12 +1,11 @@
 package com.levels.model;
 
-
 public class UserScore implements Comparable<UserScore> {
 
     private int userId;
     private int score;
 
-    UserScore(int userId, int score) {
+    public UserScore(int userId, int score) {
         this.userId = userId;
         this.score = score;
     }

@@ -1,5 +1,6 @@
 package com.levels.dao.impl;
 
+import com.levels.dao.LevelScoreDao;
 import com.levels.dao.UserSessionDao;
 
 public class DaoSingletonFactory {
@@ -33,5 +34,9 @@ public class DaoSingletonFactory {
 
     public UserSessionDao getUserSessionDao() {
         return USER_SESSION_DAO;
+    }
+
+    public LevelScoreDao getLevelScoreDao() {
+        return LEVEL_SCORE_DAO;
     }
 }
