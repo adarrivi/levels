@@ -21,14 +21,24 @@ public class EqualsHashTestVerifier {
     }
 
     public void verify() {
-        verifyEqualsValueIs(true, equals);
+        verifyEqualsValue(true, equals);
         verifyDifferents();
     }
 
-    private void verifyEqualsValueIs(boolean value, Object item) {
+    private void verifyEqualsValue(boolean value, Object item) {
         assertItemsNotNull(item);
-        verifySymmetricalEqualsIs(value, item);
-        verifyHashCodeEqualsValueIs(value, item);
+        verifyNotEqualsToNull();
+        verifyNotEqualsToDifferentClass();
+        verifyIsSymmetricalEquals(value, item);
+        verifyIsHashCodeEqualsValue(value, item);
+    }
+
+    private void verifyNotEqualsToNull() {
+        Assert.assertFalse(victim.equals(null));
+    }
+
+    private void verifyNotEqualsToDifferentClass() {
+        Assert.assertFalse(victim.equals(new Object()));
     }
 
     private void assertItemsNotNull(Object item) {
@@ -37,12 +47,12 @@ public class EqualsHashTestVerifier {
         }
     }
 
-    private void verifySymmetricalEqualsIs(boolean value, Object item) {
+    private void verifyIsSymmetricalEquals(boolean value, Object item) {
         Assert.assertEquals(value, victim.equals(item));
         Assert.assertEquals(value, item.equals(victim));
     }
 
-    private void verifyHashCodeEqualsValueIs(boolean value, Object item) {
+    private void verifyIsHashCodeEqualsValue(boolean value, Object item) {
         Assert.assertEquals(value, victim.hashCode() == item.hashCode());
     }
 
@@ -51,7 +61,7 @@ public class EqualsHashTestVerifier {
             return;
         }
         for (Object different : differents) {
-            verifyEqualsValueIs(false, different);
+            verifyEqualsValue(false, different);
         }
     }
 }

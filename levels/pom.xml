@@ -9,18 +9,22 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.7</jdk.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
-		<com.google.guava.version>15.0</com.google.guava.version>
+		<com.sun.net.httpserver.version>20070405</com.sun.net.httpserver.version>
 		<mockito.version>1.9.5</mockito.version>
 		<junit.version>4.11</junit.version>
 	</properties>
 
 	<dependencies>
 
-		<!-- Utility Libraries -->
+		<!-- Http Server libraries -->
+		<!-- sun.* are not supported by Oracle: http://www.oracle.com/technetwork/java/faq-sun-packages-142232.html 
+			although httpServer comes from com.sun.* instead, which 'should' be fine.
+			But IDE's like Eclipse complain when direct access to this library from the JDK is done.
+			To solve it, we need to include it as an external dependency-->
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>${com.google.guava.version}</version>
+			<groupId>com.sun.net.httpserver</groupId>
+			<artifactId>http</artifactId>
+			<version>${com.sun.net.httpserver.version}</version>
 		</dependency>
 
 		<!-- Logging -->

@@ -1,5 +1,7 @@
 package com.levels.service.impl;
 
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,12 +15,13 @@ import org.mockito.MockitoAnnotations;
 
 import com.levels.dao.UserSessionDao;
 import com.levels.exception.InvalidParameterException;
+import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 import com.levels.service.DateProvider;
 import com.levels.service.KeyGenerator;
 import com.levels.service.LoginService;
 
-public class LoginServiceInMemoryImplTest {
+public class LoginServiceDefaultImplTest {
     private static final String UNIQUE_KEY = "UKDFVADE";
     private static final int USER_ID = 145;
     @Mock
@@ -29,7 +32,7 @@ public class LoginServiceInMemoryImplTest {
     private UserSessionDao userSessionDao;
 
     @InjectMocks
-    private LoginService victim = new LoginServiceInMemoryImpl();
+    private LoginService victim = new LoginServiceDefaultImpl();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -37,8 +40,12 @@ public class LoginServiceInMemoryImplTest {
     // input parameters
     private int userId;
 
+    @Mock
+    private UserIdSessionDto modkedSessionDto;
+
     // output parameters
     private String sessionKey;
+    private UserIdSessionDto userSessionDto;
 
     @Before
     public void setUp() {
@@ -107,5 +114,43 @@ public class LoginServiceInMemoryImplTest {
 
     private void thenShouldReturnKey(String expectedKey) {
         Assert.assertEquals(expectedKey, sessionKey);
+    }
+
+    @Test
+    public void getValidUserIdSessionByKey_NoSessionFound_ReturnsNull() {
+        givenNoSessionFound();
+        whenGetValidUserIdSessionByKey();
+        thenSessionShouldBe(null);
+    }
+
+    private void givenNoSessionFound() {
+        Mockito.when(userSessionDao.findUserSessionDtoBySessionKey(UNIQUE_KEY)).thenReturn(null);
+    }
+
+    private void whenGetValidUserIdSessionByKey() {
+        userSessionDto = victim.getValidUserIdSessionByKey(UNIQUE_KEY);
+    }
+
+    private void thenSessionShouldBe(UserIdSessionDto expectedSessionDto) {
+        Assert.assertEquals(expectedSessionDto, userSessionDto);
+    }
+
+    @Test
+    public void getValidUserIdSessionByKey_SessionExpired_ReturnsNull() {
+        givenExpiredSession(true);
+        whenGetValidUserIdSessionByKey();
+        thenSessionShouldBe(null);
+    }
+
+    private void givenExpiredSession(boolean expired) {
+        Mockito.when(modkedSessionDto.hasExpired(Matchers.any(Date.class))).thenReturn(expired);
+        Mockito.when(userSessionDao.findUserSessionDtoBySessionKey(UNIQUE_KEY)).thenReturn(modkedSessionDto);
+    }
+
+    @Test
+    public void getValidUserIdSessionByKey_ReturnsSessionDto() {
+        givenExpiredSession(false);
+        whenGetValidUserIdSessionByKey();
+        thenSessionShouldBe(modkedSessionDto);
     }
 }

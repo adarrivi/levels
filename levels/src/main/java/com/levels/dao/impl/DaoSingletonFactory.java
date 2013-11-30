@@ -4,20 +4,20 @@ import com.levels.dao.UserSessionDao;
 
 public class DaoSingletonFactory {
 
-    private static final int MAX_SESSIONS_ALLOWED = 3000;
-    private static final UserSessionDaoInMemory USER_SESSION_DAO_IN_MEMORY = new UserSessionDaoInMemory();
-
+    private static final int MAX_SESSIONS_ALLOWED = 10000;
     private static final DaoSingletonFactory INSTANCE = new DaoSingletonFactory();
 
-    private DaoSingletonFactory() {
-        USER_SESSION_DAO_IN_MEMORY.setMaxUserSessionAllowed(MAX_SESSIONS_ALLOWED);
-    }
+    private UserSessionDaoInMemory USER_SESSION_DAO = new UserSessionDaoInMemory();
 
     public static DaoSingletonFactory getInstance() {
         return INSTANCE;
     }
 
-    public UserSessionDao getUserSessionDaoInMemory() {
-        return USER_SESSION_DAO_IN_MEMORY;
+    private DaoSingletonFactory() {
+        USER_SESSION_DAO.setMaxUserSessionAllowed(MAX_SESSIONS_ALLOWED);
+    }
+
+    public UserSessionDao getUserSessionDao() {
+        return USER_SESSION_DAO;
     }
 }

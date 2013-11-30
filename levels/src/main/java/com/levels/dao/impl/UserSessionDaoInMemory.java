@@ -1,10 +1,12 @@
 package com.levels.dao.impl;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.levels.dao.UserSessionDao;
 import com.levels.exception.MaxSessionsReachedException;
+import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 
 class UserSessionDaoInMemory implements UserSessionDao {
@@ -36,13 +38,15 @@ class UserSessionDaoInMemory implements UserSessionDao {
     }
 
     @Override
-    public void deleteUserSession(int userId) {
-        sessionMap.remove(userId);
-    }
-
-    @Override
-    public UserSession findUserSession(int userId) {
-        return sessionMap.get(userId);
+    public UserIdSessionDto findUserSessionDtoBySessionKey(String sessionKey) {
+        // UserId and Session is a One to One relationship, so it's safe return
+        // the first key coincidence.
+        for (Entry<Integer, UserSession> sessionEntry : sessionMap.entrySet()) {
+            if (sessionEntry.getValue().getKey().equals(sessionKey)) {
+                return new UserIdSessionDto(sessionEntry.getKey(), sessionEntry.getValue());
+            }
+        }
+        return null;
     }
 
 }

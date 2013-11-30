@@ -1,7 +1,10 @@
 package com.levels.dao.impl;
 
+import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.levels.exception.MaxSessionsReachedException;
+import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 
 public class UserSessionDaoInMemoryTest {
@@ -22,7 +26,7 @@ public class UserSessionDaoInMemoryTest {
 
     private static final int MAX_SESSIONS_ALLOWED = 5;
 
-    private static final String KEY_PREFIX = "key";
+    private static final String SESSION_KEY = "UTDSFGK";
 
     @Mock
     private Map<Integer, UserSession> sessionMap;
@@ -36,7 +40,7 @@ public class UserSessionDaoInMemoryTest {
     // input parameters
     private UserSession userSession;
     // output parameters
-    private UserSession sessionFound;
+    private UserIdSessionDto foundUserDto;
 
     @Before
     public void setUp() {
@@ -57,7 +61,7 @@ public class UserSessionDaoInMemoryTest {
     }
 
     private void givenNewSessionForUser() {
-        userSession = new UserSession(KEY_PREFIX + USER_ID, new Date());
+        userSession = new UserSession(SESSION_KEY + USER_ID, new Date());
     }
 
     private void whenSaveOrUpdate() {
@@ -83,38 +87,38 @@ public class UserSessionDaoInMemoryTest {
     }
 
     @Test
-    public void deleteUserSession_SessionRemovedFromMap() {
-        givenNewSessionForUser();
-        whenDeleteSession();
-        thenUserIdSessionShouldBeRemovedFromMap();
+    public void findUserSessionDtoBySessionKey_KeyNotFound_ReturnsNull() {
+        givenSessionKeyNotFound();
+        whenFindUserSessionDtoBySessionKey();
+        thenFoundUserIdShouldBeNull();
     }
 
-    private void whenDeleteSession() {
-        victim.deleteUserSession(USER_ID);
+    private void thenFoundUserIdShouldBeNull() {
+        Assert.assertNull(foundUserDto);
     }
 
-    private void thenUserIdSessionShouldBeRemovedFromMap() {
-        Mockito.verify(sessionMap).remove(USER_ID);
+    private void givenSessionKeyNotFound() {
+        Mockito.when(sessionMap.entrySet()).thenReturn(Collections.<Entry<Integer, UserSession>> emptySet());
+    }
+
+    private void whenFindUserSessionDtoBySessionKey() {
+        foundUserDto = victim.findUserSessionDtoBySessionKey(SESSION_KEY);
+    }
+
+    private void thenFoundUserIdShouldBe(Integer expectedValue) {
+        Assert.assertTrue(expectedValue == foundUserDto.getUserId());
     }
 
     @Test
-    public void findUserSession_ReturnsSessionMapGet() {
-        givenUserSessionFound();
-        whenFindUserSession();
-        thenSessionFoundShouldBeFromMap();
+    public void findUserSessionDtoBySessionKey_KeyFound_ReturnsUserId() {
+        givenSessionKeyFound();
+        whenFindUserSessionDtoBySessionKey();
+        thenFoundUserIdShouldBe(USER_ID);
     }
 
-    private void givenUserSessionFound() {
-        givenNewSessionForUser();
-        Mockito.when(sessionMap.get(USER_ID)).thenReturn(userSession);
-    }
-
-    private void whenFindUserSession() {
-        sessionFound = victim.findUserSession(USER_ID);
-    }
-
-    private void thenSessionFoundShouldBeFromMap() {
-        Mockito.verify(sessionMap).get(USER_ID);
-        Assert.assertEquals(sessionFound, userSession);
+    private void givenSessionKeyFound() {
+        UserSession session = new UserSession(SESSION_KEY, new Date());
+        Entry<Integer, UserSession> entry = new AbstractMap.SimpleEntry<Integer, UserSession>(USER_ID, session);
+        Mockito.when(sessionMap.entrySet()).thenReturn(Collections.singleton(entry));
     }
 }
