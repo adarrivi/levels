@@ -7,24 +7,24 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import com.levels.http.controller.HttpStringController;
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
- * This filter adds into HttpExchange a new tag with the request' GET and POST
- * parameters
+ * This filter adds into HttpExchange a new tag with the request' url parameters
+ * and post content (if any) parameters
  * 
  * @author adarrivi
  * 
  */
 public class ParameterFilter extends Filter {
 
-    private static final String PARAMETERS_TAG = "parameters";
+    public static final String PARAMETERS_TAG = "parameters";
+    public static final String POST_BODY_TAG = "postBody";
 
     @Override
     public String description() {
@@ -33,34 +33,31 @@ public class ParameterFilter extends Filter {
 
     @Override
     public void doFilter(HttpExchange exchange, Chain chain) throws IOException {
-        parseGetParameters(exchange);
-        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
-            parsePostParameters(exchange);
+        addUrlParameters(exchange);
+        if (HttpStringController.POST.equalsIgnoreCase(exchange.getRequestMethod())) {
+            addPostBody(exchange);
         }
         chain.doFilter(exchange);
     }
 
-    private void parseGetParameters(HttpExchange exchange) throws UnsupportedEncodingException {
-        Map<String, Object> parameters = new HashMap<String, Object>();
+    private void addUrlParameters(HttpExchange exchange) throws UnsupportedEncodingException {
+        Map<String, String> parameters = new HashMap<>();
         URI requestedUri = exchange.getRequestURI();
         String query = requestedUri.getRawQuery();
         parseQuery(query, parameters);
         exchange.setAttribute(PARAMETERS_TAG, parameters);
     }
 
-    @SuppressWarnings("unchecked")
-    private void parsePostParameters(HttpExchange exchange) throws IOException {
-        Map<String, Object> parameters = (Map<String, Object>) exchange.getAttribute(PARAMETERS_TAG);
+    private void addPostBody(HttpExchange exchange) throws IOException {
         InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader(isr);
         String query = br.readLine();
-        parseQuery(query, parameters);
+        exchange.setAttribute(POST_BODY_TAG, query);
     }
 
-    @SuppressWarnings("unchecked")
-    private void parseQuery(String query, Map<String, Object> parameters) throws UnsupportedEncodingException {
+    private void parseQuery(String query, Map<String, String> parameters) throws UnsupportedEncodingException {
         if (query != null) {
-            String pairs[] = query.split("[&]");
+            String pairs[] = query.split("[?]");
             for (String pair : pairs) {
                 String param[] = pair.split("[=]");
                 String key = null;
@@ -71,21 +68,7 @@ public class ParameterFilter extends Filter {
                 if (param.length > 1) {
                     value = URLDecoder.decode(param[1], System.getProperty("file.encoding"));
                 }
-
-                if (parameters.containsKey(key)) {
-                    Object obj = parameters.get(key);
-                    if (obj instanceof List<?>) {
-                        List<String> values = (List<String>) obj;
-                        values.add(value);
-                    } else if (obj instanceof String) {
-                        List<String> values = new ArrayList<String>();
-                        values.add((String) obj);
-                        values.add(value);
-                        parameters.put(key, values);
-                    }
-                } else {
-                    parameters.put(key, value);
-                }
+                parameters.put(key, value);
             }
         }
     }

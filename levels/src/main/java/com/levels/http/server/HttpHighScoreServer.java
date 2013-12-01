@@ -22,6 +22,7 @@ public class HttpHighScoreServer {
         HttpRequestRouterHandler requestRouter = new HttpRequestRouterHandler();
         requestRouter.addController(ControllerSingletonFactory.getInstance().getLoginController());
         requestRouter.addController(ControllerSingletonFactory.getInstance().getHighScoreController());
+        requestRouter.addController(ControllerSingletonFactory.getInstance().getUserScoreController());
         HttpContext context = server.createContext("/", requestRouter);
         context.getFilters().add(new ParameterFilter());
         server.start();

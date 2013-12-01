@@ -53,7 +53,7 @@ public class HttpRequestRouterHandler implements HttpHandler {
                     HttpURLConnection.HTTP_BAD_REQUEST);
             return;
         }
-        LOG.error("Url not mapped: {}. Returning BadRequest", exchange.getRequestURI());
+        LOG.error("{} Url not mapped: {}. Returning BadRequest", exchange.getRequestMethod(), exchange.getRequestURI());
         writeResponse(exchange, "Unknown URL", HttpURLConnection.HTTP_BAD_REQUEST);
     }
 
@@ -75,8 +75,8 @@ public class HttpRequestRouterHandler implements HttpHandler {
 
     private void writeResponse(HttpExchange exchange, String content, int status) {
         try {
-            Headers h = exchange.getResponseHeaders();
-            h.set("Content-Type", "text/plain");
+            Headers header = exchange.getResponseHeaders();
+            header.set("Content-Type", "text/plain");
             exchange.sendResponseHeaders(status, content.length());
             OutputStream outputStream = exchange.getResponseBody();
             outputStream.write(content.getBytes());

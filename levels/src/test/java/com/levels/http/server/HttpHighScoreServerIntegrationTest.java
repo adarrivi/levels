@@ -1,10 +1,11 @@
 package com.levels.http.server;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,14 +16,20 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.levels.http.controller.HttpStringController;
+
 public class HttpHighScoreServerIntegrationTest {
 
-    private static final int NUMBER_OF_USERS = 3;
+    private static final String EMPTY = "";
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     private Map<Integer, String> sessionMap = new HashMap<>();
+
+    // output parameters
+    private int responseCode;
+    private String responseContent;
 
     @BeforeClass
     public static void setUpClass() throws IOException {
@@ -34,42 +41,70 @@ public class HttpHighScoreServerIntegrationTest {
         HttpHighScoreServer.stopServer();
     }
 
-    @Test
-    public void testLoginConnection() throws IOException {
-        for (int i = 0; i < NUMBER_OF_USERS; i++) {
-            loginUser(i);
+    private void loginUsers(int numberOfUsers) throws IOException {
+        for (int i = 0; i < numberOfUsers; i++) {
+            requestGet("http://localhost:8081/" + i + "/login");
+            verifyResponseType(HttpURLConnection.HTTP_OK);
+            sessionMap.put(i, responseContent);
+
         }
-        Assert.assertTrue(NUMBER_OF_USERS == sessionMap.size());
+        Assert.assertTrue(numberOfUsers == sessionMap.size());
     }
 
-    private void loginUser(int userId) throws IOException {
-        String sesionKey = connect("http://localhost:8081/" + userId + "/login");
-        sessionMap.put(userId, sesionKey);
+    private void verifyResponseType(int expectedType) {
+        Assert.assertEquals(expectedType, responseCode);
     }
 
-    private String connect(String urlPath) throws IOException {
-        URL url = new URL(urlPath);
-        URLConnection conn = url.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        return in.readLine();
-    }
-
-    @Test
-    public void testUrlNotFound() throws IOException {
-        expectBadRequestResponse();
-        connect("http://localhost:8081/urlNotFound/test");
-    }
-
-    private void expectBadRequestResponse() {
-        expectedException.expect(IOException.class);
-        expectedException.expectMessage("Server returned HTTP response code: 400");
+    private void verifyResponseContent(String expectedContent) {
+        Assert.assertEquals(expectedContent, responseContent);
     }
 
     @Test
     public void testHighScoreConnection() throws IOException {
-        String result = connect("http://localhost:8081/1/highscorelist");
-        Assert.assertEquals("", result);
+        loginUsers(3);
+        String scoreUrl = "http://localhost:8081/1/score?sessionkey=";
+        int score = 10;
+        for (String sessionKey : sessionMap.values()) {
+            requestPost(scoreUrl + sessionKey, Integer.toString(score));
+            verifyResponseType(HttpURLConnection.HTTP_OK);
+            verifyResponseContent(EMPTY);
+            score += 5;
+        }
+        requestGet("http://localhost:8081/1/highscorelist");
+        Assert.assertEquals("2=20,1=15,0=10", responseContent);
+    }
 
+    private void requestGet(String urlPath) throws IOException {
+        URL url = new URL(urlPath);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod(HttpStringController.GET);
+        readResponse(connection);
+    }
+
+    private void readResponse(HttpURLConnection connection) throws IOException {
+        responseCode = connection.getResponseCode();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuilder sb = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            sb.append(inputLine);
+        }
+        in.close();
+        responseContent = sb.toString();
+    }
+
+    private void requestPost(String urlPath, String postContent) throws IOException {
+        URL url = new URL(urlPath);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod(HttpStringController.POST);
+        connection.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.writeBytes(postContent);
+        wr.flush();
+        wr.close();
+        readResponse(connection);
     }
 
 }
