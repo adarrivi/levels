@@ -60,6 +60,12 @@ public class HttpHighScoreServerIntegrationTest {
     }
 
     @Test
+    public void testInvalidUrl() throws IOException {
+        expectedException.expectMessage("Server returned HTTP response code: 400");
+        requestGet("http://localhost:8081/aasdfasdf/highscorelist");
+    }
+
+    @Test
     public void testHighScoreConnection() throws IOException {
         loginUsers(3);
         String scoreUrl = "http://localhost:8081/1/score?sessionkey=";
