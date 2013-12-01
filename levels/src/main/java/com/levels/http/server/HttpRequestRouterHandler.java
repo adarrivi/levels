@@ -22,6 +22,13 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+/**
+ * Routes all the incoming requests to the different controllers depending on
+ * the url
+ * 
+ * @author adarrivi
+ * 
+ */
 class HttpRequestRouterHandler implements HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestRouterHandler.class);
@@ -114,8 +121,8 @@ class HttpRequestRouterHandler implements HttpHandler {
             outputStream.write(content.getBytes());
             outputStream.close();
         } catch (IOException ex) {
+            // Nothing else we can do, just wait for other requests
             LOG.error("Exception while writing the response", ex);
-            // Nothing else to do, just wait for other requests
         }
     }
 

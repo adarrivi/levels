@@ -4,6 +4,13 @@ import java.util.Map;
 
 import com.levels.service.LoginService;
 
+/**
+ * Controller that processes login requests like
+ * http://localhost:8081/4711/login --> UICSNDK
+ * 
+ * @author adarrivi
+ * 
+ */
 class LoginController implements HttpStringResponseController {
 
     private LoginService loginService;

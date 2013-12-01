@@ -5,6 +5,12 @@ import com.levels.service.DateProvider;
 import com.levels.service.LevelScoreService;
 import com.levels.service.LoginService;
 
+/**
+ * Singleton factory to grant access to the different services implementations
+ * 
+ * @author adarrivi
+ * 
+ */
 public class ServiceSingletonFactory {
 
     private static final ServiceSingletonFactory INSTANCE = new ServiceSingletonFactory();

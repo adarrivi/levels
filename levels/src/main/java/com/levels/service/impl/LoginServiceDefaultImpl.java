@@ -8,6 +8,12 @@ import com.levels.service.DateProvider;
 import com.levels.service.KeyGenerator;
 import com.levels.service.LoginService;
 
+/**
+ * Singleton service to manage login and session requests
+ * 
+ * @author adarrivi
+ * 
+ */
 class LoginServiceDefaultImpl implements LoginService {
 
     private DateProvider dateProvider;

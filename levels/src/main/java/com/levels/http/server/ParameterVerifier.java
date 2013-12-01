@@ -2,6 +2,13 @@ package com.levels.http.server;
 
 import com.levels.exception.InvalidParameterException;
 
+/**
+ * Utility class for parse string values into different objects, like unsigned
+ * 31bit integers
+ * 
+ * @author adarrivi
+ * 
+ */
 class ParameterVerifier {
 
     private static final String EMPTY = "";

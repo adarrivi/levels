@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * Singleton class providing new {@link Date} instances. The main reason of this
- * class is to allow us to mock easier Dates in Unit testing
+ * class is to allow us to unit test easier functionality related with Dates
  * 
  * @author adarrivi
  * 

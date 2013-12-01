@@ -3,11 +3,21 @@ package com.levels.dao.impl;
 import com.levels.dao.LevelScoreDao;
 import com.levels.dao.UserSessionDao;
 
+/**
+ * Singleton factory that grants access to the different in-memory Dao classes
+ * 
+ * @author adarrivi
+ * 
+ */
 public class DaoSingletonFactory {
 
+    // Defines the maximum sessions allowed in memory
     private static final int MAX_SESSIONS_ALLOWED = 10000;
+    // Defines the maximum levels allowed in memory
     private static final int MAX_LEVELS_ALLOWED = 10000;
+    // Defines the maximum high scores allowed per level
     private static final int MAX_SCORES_PER_LEVEL = 15;
+
     private static final DaoSingletonFactory INSTANCE = new DaoSingletonFactory();
 
     private UserSessionDaoInMemory USER_SESSION_DAO = new UserSessionDaoInMemory();

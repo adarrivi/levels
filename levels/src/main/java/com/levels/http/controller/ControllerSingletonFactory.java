@@ -2,6 +2,12 @@ package com.levels.http.controller;
 
 import com.levels.service.impl.ServiceSingletonFactory;
 
+/**
+ * Singleton class that grants access to all the different url controllers
+ * 
+ * @author adarrivi
+ * 
+ */
 public class ControllerSingletonFactory {
 
     private static final ControllerSingletonFactory INSTANCE = new ControllerSingletonFactory();

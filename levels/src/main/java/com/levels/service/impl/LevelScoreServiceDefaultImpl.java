@@ -8,6 +8,12 @@ import com.levels.model.UserScore;
 import com.levels.service.LevelScoreService;
 import com.levels.service.LoginService;
 
+/**
+ * Singleton service to manage the score system
+ * 
+ * @author adarrivi
+ * 
+ */
 class LevelScoreServiceDefaultImpl implements LevelScoreService {
 
     private static final String USER_SCORE_SEPPARATOR = "=";

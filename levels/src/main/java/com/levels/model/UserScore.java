@@ -1,5 +1,11 @@
 package com.levels.model;
 
+/**
+ * Defines one user score entity
+ * 
+ * @author adarrivi
+ * 
+ */
 public class UserScore implements Comparable<UserScore> {
 
     private int userId;

@@ -5,6 +5,13 @@ import java.util.Map;
 import com.levels.exception.InvalidParameterException;
 import com.levels.service.LevelScoreService;
 
+/**
+ * Controller that processes user's score requests like
+ * http://localhost:8081/2/score?sessionkey=UICSNDK (with the post body: 1500)
+ * 
+ * @author adarrivi
+ * 
+ */
 class UserScoreController implements HttpStringResponseController {
 
     private static final String SESSIONKEY_PARAMETER = "sessionkey";

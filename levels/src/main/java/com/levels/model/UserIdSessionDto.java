@@ -2,6 +2,13 @@ package com.levels.model;
 
 import java.util.Date;
 
+/**
+ * Holds together the userId and the session. This class is needed to simplify
+ * the Service/DAO logic and to save accesses to DAO
+ * 
+ * @author adarrivi
+ * 
+ */
 public class UserIdSessionDto {
 
     private int userId;

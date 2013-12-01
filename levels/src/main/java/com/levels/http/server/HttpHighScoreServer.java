@@ -11,6 +11,12 @@ import com.levels.http.filter.ParameterFilter;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
+/**
+ * Main Server class. Starts a Http server listening requests.
+ * 
+ * @author adarrivi
+ * 
+ */
 public class HttpHighScoreServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpHighScoreServer.class);

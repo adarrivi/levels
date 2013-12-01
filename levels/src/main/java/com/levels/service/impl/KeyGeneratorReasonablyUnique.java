@@ -6,7 +6,7 @@ import com.levels.service.KeyGenerator;
 
 /**
  * Singleton class that returns a 'Reasonably unique' and alphabetical random
- * identifier.
+ * identifier with 7 chars.
  * 
  * @author adarrivi
  * 
@@ -24,10 +24,10 @@ class KeyGeneratorReasonablyUnique implements KeyGenerator {
 
     @Override
     public String generateUniqueKey() {
-        return randomAlphabeticalString(ID_LENGTH);
+        return createRandomAlphabeticalString(ID_LENGTH);
     }
 
-    private String randomAlphabeticalString(int length) {
+    private String createRandomAlphabeticalString(int length) {
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             int randomCharPosition = RANDOM.nextInt(ALLOWED_CHARS.length());

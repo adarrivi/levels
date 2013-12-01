@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility builder to test different regex patterns
+ * 
+ * @author adarrivi
+ * 
+ */
 public class PatternVerifierTestBuilder {
 
     private String regex;

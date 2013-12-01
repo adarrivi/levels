@@ -4,6 +4,13 @@ import java.util.Map;
 
 import com.levels.service.LevelScoreService;
 
+/**
+ * Controller that processes get-high-score requests like
+ * http://localhost:8081/2/highscorelist -> 4711=1500,131=1220
+ * 
+ * @author adarrivi
+ * 
+ */
 class HighScoreController implements HttpStringResponseController {
 
     private LevelScoreService levelScoreService;

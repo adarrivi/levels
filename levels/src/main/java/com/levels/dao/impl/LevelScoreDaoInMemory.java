@@ -10,6 +10,13 @@ import com.levels.exception.MaxMemoryReachedException;
 import com.levels.model.LevelHighScores;
 import com.levels.model.UserScore;
 
+/**
+ * Singleton DAO class for the User's High Scores per level, keeping the results
+ * stored in memory
+ * 
+ * @author adarrivi
+ * 
+ */
 class LevelScoreDaoInMemory implements LevelScoreDao {
 
     private int maxHighScoresPerLevel;

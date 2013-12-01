@@ -9,6 +9,13 @@ import com.levels.exception.MaxMemoryReachedException;
 import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 
+/**
+ * Singleton DAO class for the User's Sessions, keeping the results stored in
+ * memory
+ * 
+ * @author adarrivi
+ * 
+ */
 class UserSessionDaoInMemory implements UserSessionDao {
 
     private Map<Integer, UserSession> sessionMap = new ConcurrentHashMap<>();
