@@ -26,8 +26,8 @@ public class ParameterFilter extends Filter {
     public static final String URL_PARAMETERS_TAG = "parameters";
     public static final String POST_BODY_TAG = "postBody";
 
-    private static final String PARAM_VALUE_SEPPARATOR_REGEX = "[=]";
-    private static final String URL_PARAMETER_SEPPARATOR_REGEX = "[?]";
+    private static final String PARAM_VALUE_SEPARATOR_REGEX = "[=]";
+    private static final String URL_PARAMETER_SEPARATOR_REGEX = "[?]";
     private static final String FILE_ENCODING = System.getProperty("file.encoding");
 
     @Override
@@ -61,9 +61,9 @@ public class ParameterFilter extends Filter {
 
     private void parseQuery(String query, Map<String, String> parameters) throws UnsupportedEncodingException {
         if (query != null) {
-            String pairs[] = query.split(URL_PARAMETER_SEPPARATOR_REGEX);
+            String pairs[] = query.split(URL_PARAMETER_SEPARATOR_REGEX);
             for (String pair : pairs) {
-                String param[] = pair.split(PARAM_VALUE_SEPPARATOR_REGEX);
+                String param[] = pair.split(PARAM_VALUE_SEPARATOR_REGEX);
                 String key = null;
                 String value = null;
                 if (param.length > 0) {

@@ -16,8 +16,8 @@ import com.levels.service.LoginService;
  */
 class LevelScoreServiceDefaultImpl implements LevelScoreService {
 
-    private static final String USER_SCORE_SEPPARATOR = "=";
-    private static final String CSV_SEPPARATOR = ",";
+    private static final String USER_SCORE_SEPARATOR = "=";
+    private static final String CSV_SEPARATOR = ",";
     private LoginService loginService;
     private LevelScoreDao levelScoreDao;
 
@@ -52,9 +52,9 @@ class LevelScoreServiceDefaultImpl implements LevelScoreService {
         StringBuilder builder = new StringBuilder();
         for (UserScore userScore : highScoreList) {
             if (builder.length() != 0) {
-                builder.append(CSV_SEPPARATOR);
+                builder.append(CSV_SEPARATOR);
             }
-            builder.append(userScore.getUserId()).append(USER_SCORE_SEPPARATOR).append(userScore.getScore());
+            builder.append(userScore.getUserId()).append(USER_SCORE_SEPARATOR).append(userScore.getScore());
         }
         return builder.toString();
     }
