@@ -1,17 +1,12 @@
 package com.levels.http.controller;
 
-import java.net.URI;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.levels.service.LevelScoreService;
-import com.sun.net.httpserver.HttpExchange;
 
-class HighScoreController implements HttpStringController {
+class HighScoreController implements HttpStringResponseController {
 
     private LevelScoreService levelScoreService;
-    private ParameterVerifier parameterVerifier;
 
     HighScoreController() {
         // Only SingletonFactory (and Unit tests) should have access to the
@@ -19,26 +14,8 @@ class HighScoreController implements HttpStringController {
     }
 
     // This method should be used only by SingletonFactory and Unit tests
-    void setParameterVerifier(ParameterVerifier parameterVerifier) {
-        this.parameterVerifier = parameterVerifier;
-    }
-
-    // This method should be used only by SingletonFactory and Unit tests
     void setLevelScoreService(LevelScoreService levelScoreService) {
         this.levelScoreService = levelScoreService;
-    }
-
-    @Override
-    public String processRequest(HttpExchange exchange, Map<String, Object> parameters) {
-        int level = getLevelFromURI(exchange.getRequestURI());
-        return levelScoreService.getHighScoreListPerLevel(level);
-    }
-
-    private int getLevelFromURI(URI uri) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(uri.toString());
-        matcher.find();
-        return parameterVerifier.getValueAsUnsignedInt(matcher.group());
     }
 
     @Override
@@ -48,7 +25,12 @@ class HighScoreController implements HttpStringController {
 
     @Override
     public String getRequestMethod() {
-        return HttpStringController.GET;
+        return HttpStringResponseController.GET;
+    }
+
+    @Override
+    public String processRequest(Map<String, String> urlParameters, Integer postBody, int integerFromUrl) {
+        return levelScoreService.getHighScoreListPerLevel(integerFromUrl);
     }
 
 }

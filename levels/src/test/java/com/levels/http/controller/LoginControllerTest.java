@@ -1,8 +1,5 @@
 package com.levels.http.controller;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,9 +10,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.levels.exception.InvalidParameterException;
 import com.levels.service.LoginService;
-import com.sun.net.httpserver.HttpExchange;
+import com.levels.util.PatternVerifierTestBuilder;
 
 public class LoginControllerTest {
 
@@ -24,18 +20,15 @@ public class LoginControllerTest {
 
     @Mock
     private LoginService loginService;
-    @Mock
-    private ParameterVerifier parameterVerifier;
 
     @InjectMocks
-    private HttpStringController victim = new LoginController();
+    private HttpStringResponseController victim = new LoginController();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     // input parameters
-    @Mock
-    private HttpExchange exchange;
+    private int integerFromUrl;
 
     // output parameters
     private String key;
@@ -45,38 +38,20 @@ public class LoginControllerTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void processRequest_InvalidParameter_ThrowsEx() throws URISyntaxException {
-        expectedException.expect(InvalidParameterException.class);
-        givenInvalidParameter();
-        givenUrlRequest("/" + USER_ID + "/login");
-        whenProcessRequest();
-    }
-
-    private void givenInvalidParameter() {
-        Mockito.doThrow(InvalidParameterException.class).when(parameterVerifier).getValueAsUnsignedInt(Integer.toString(USER_ID));
-    }
-
-    private void givenUrlRequest(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        Mockito.when(exchange.getRequestURI()).thenReturn(uri);
-    }
-
     private void whenProcessRequest() {
-        key = victim.processRequest(exchange, null);
+        key = victim.processRequest(null, null, integerFromUrl);
     }
 
     @Test
-    public void processRequest_ReturnsLoginServiceKey() throws URISyntaxException {
-        givenUrlRequest("/" + USER_ID + "/login");
-        givenValidParameter(USER_ID);
+    public void processRequest_ReturnsLoginServiceKey() {
+        givenUserParameter(USER_ID);
         givenKeyFromService(KEY);
         whenProcessRequest();
         thenKeyShouldBe(KEY);
     }
 
-    private void givenValidParameter(int userId) {
-        Mockito.when(parameterVerifier.getValueAsUnsignedInt(Integer.toString(userId))).thenReturn(userId);
+    private void givenUserParameter(int userId) {
+        integerFromUrl = userId;
     }
 
     private void givenKeyFromService(String aKey) {
@@ -86,4 +61,32 @@ public class LoginControllerTest {
     private void thenKeyShouldBe(String expectedKey) {
         Assert.assertEquals(expectedKey, key);
     }
+
+    @Test
+    public void verifyValidUrls() {
+        PatternVerifierTestBuilder patterVerifierBuilder = PatternVerifierTestBuilder.newBuilder(victim.getUrlRegexPattern());
+        patterVerifierBuilder.addString("/0/login");
+        patterVerifierBuilder.addString("/1/login");
+        patterVerifierBuilder.addString("/12345/login");
+        patterVerifierBuilder.addString("/12345/login      ");
+        patterVerifierBuilder.verifyMatchesAll();
+    }
+
+    @Test
+    public void verifyInvalidsUrls() {
+        PatternVerifierTestBuilder patterVerifierBuilder = PatternVerifierTestBuilder.newBuilder(victim.getUrlRegexPattern());
+        patterVerifierBuilder.addString("/login");
+        patterVerifierBuilder.addString("//login");
+        patterVerifierBuilder.addString("/-1/login");
+        patterVerifierBuilder.addString("/-12345/login");
+        patterVerifierBuilder.addString("/a/login");
+        patterVerifierBuilder.addString("/abcde/login");
+        patterVerifierBuilder.verifyNoMatches();
+    }
+
+    @Test
+    public void requestMethod_ShouldReturnGet() {
+        Assert.assertEquals(HttpStringResponseController.GET, victim.getRequestMethod());
+    }
+
 }

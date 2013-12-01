@@ -10,31 +10,35 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.levels.http.controller.HttpStringController;
+import com.levels.http.controller.HttpStringResponseController;
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
- * This filter adds into HttpExchange a new tag with the request' url parameters
- * and post content (if any) parameters
+ * This filter adds into HttpExchange a new tag with the request's url
+ * parameters and post content (if any)
  * 
  * @author adarrivi
  * 
  */
 public class ParameterFilter extends Filter {
 
-    public static final String PARAMETERS_TAG = "parameters";
+    public static final String URL_PARAMETERS_TAG = "parameters";
     public static final String POST_BODY_TAG = "postBody";
+
+    private static final String PARAM_VALUE_SEPPARATOR_REGEX = "[=]";
+    private static final String URL_PARAMETER_SEPPARATOR_REGEX = "[?]";
+    private static final String FILE_ENCODING = System.getProperty("file.encoding");
 
     @Override
     public String description() {
-        return "Retrieves the url GEt and POST parameters and includes them into HttpExchange";
+        return "Retrieves the url and post parameters and adds them back into HttpExchange";
     }
 
     @Override
     public void doFilter(HttpExchange exchange, Chain chain) throws IOException {
         addUrlParameters(exchange);
-        if (HttpStringController.POST.equalsIgnoreCase(exchange.getRequestMethod())) {
+        if (HttpStringResponseController.POST.equalsIgnoreCase(exchange.getRequestMethod())) {
             addPostBody(exchange);
         }
         chain.doFilter(exchange);
@@ -45,7 +49,7 @@ public class ParameterFilter extends Filter {
         URI requestedUri = exchange.getRequestURI();
         String query = requestedUri.getRawQuery();
         parseQuery(query, parameters);
-        exchange.setAttribute(PARAMETERS_TAG, parameters);
+        exchange.setAttribute(URL_PARAMETERS_TAG, parameters);
     }
 
     private void addPostBody(HttpExchange exchange) throws IOException {
@@ -57,16 +61,16 @@ public class ParameterFilter extends Filter {
 
     private void parseQuery(String query, Map<String, String> parameters) throws UnsupportedEncodingException {
         if (query != null) {
-            String pairs[] = query.split("[?]");
+            String pairs[] = query.split(URL_PARAMETER_SEPPARATOR_REGEX);
             for (String pair : pairs) {
-                String param[] = pair.split("[=]");
+                String param[] = pair.split(PARAM_VALUE_SEPPARATOR_REGEX);
                 String key = null;
                 String value = null;
                 if (param.length > 0) {
-                    key = URLDecoder.decode(param[0], System.getProperty("file.encoding"));
+                    key = URLDecoder.decode(param[0], FILE_ENCODING);
                 }
                 if (param.length > 1) {
-                    value = URLDecoder.decode(param[1], System.getProperty("file.encoding"));
+                    value = URLDecoder.decode(param[1], FILE_ENCODING);
                 }
                 parameters.put(key, value);
             }

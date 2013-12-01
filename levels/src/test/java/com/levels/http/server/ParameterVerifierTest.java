@@ -1,4 +1,4 @@
-package com.levels.http.controller;
+package com.levels.http.server;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.levels.exception.InvalidParameterException;
+import com.levels.http.server.ParameterVerifier;
 
 public class ParameterVerifierTest {
 

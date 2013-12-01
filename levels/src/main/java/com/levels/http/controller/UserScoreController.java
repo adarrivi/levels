@@ -1,27 +1,20 @@
 package com.levels.http.controller;
 
-import java.net.URI;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.levels.http.filter.ParameterFilter;
+import com.levels.exception.InvalidParameterException;
 import com.levels.service.LevelScoreService;
-import com.sun.net.httpserver.HttpExchange;
 
-class UserScoreController implements HttpStringController {
+class UserScoreController implements HttpStringResponseController {
+
+    private static final String SESSIONKEY_PARAMETER = "sessionkey";
+    private static final String EMPTY = "";
 
     private LevelScoreService levelScoreService;
-    private ParameterVerifier parameterVerifier;
 
     UserScoreController() {
         // Only SingletonFactory (and Unit tests) should have access to the
         // constructor
-    }
-
-    // This method should be used only by SingletonFactory and Unit tests
-    void setParameterVerifier(ParameterVerifier parameterVerifier) {
-        this.parameterVerifier = parameterVerifier;
     }
 
     // This method should be used only by SingletonFactory and Unit tests
@@ -30,28 +23,33 @@ class UserScoreController implements HttpStringController {
     }
 
     @Override
-    public String processRequest(HttpExchange exchange, Map<String, Object> parameters) {
-        int level = getLevelFromURI(exchange.getRequestURI());
-        String scoreValue = (String) exchange.getAttribute(ParameterFilter.POST_BODY_TAG);
-        levelScoreService.addScore(level, Integer.valueOf(scoreValue), (String) parameters.get("sessionkey"));
-        return "";
-    }
-
-    private int getLevelFromURI(URI uri) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(uri.toString());
-        matcher.find();
-        return parameterVerifier.getValueAsUnsignedInt(matcher.group());
-    }
-
-    @Override
     public String getUrlRegexPattern() {
         return "/\\d+/score.*";
     }
 
     @Override
+    public String processRequest(Map<String, String> urlParameters, Integer postBody, int integerFromUrl) {
+        verifyRequestParameters(urlParameters, postBody);
+        levelScoreService.addScore(integerFromUrl, postBody, urlParameters.get(SESSIONKEY_PARAMETER));
+        return EMPTY;
+    }
+
+    private void verifyRequestParameters(Map<String, String> urlParameters, Integer postBody) {
+        if (urlParameters == null || urlParameters.isEmpty()) {
+            throw new InvalidParameterException("No parameters found in the url.");
+        }
+        String sessionKey = urlParameters.get(SESSIONKEY_PARAMETER);
+        if (sessionKey == null || EMPTY.equals(sessionKey)) {
+            throw new InvalidParameterException("The parameter 'sessionkey' is mandatory and cannot be empty.");
+        }
+        if (postBody == null) {
+            throw new InvalidParameterException("The user's score must be set in the POST body");
+        }
+    }
+
+    @Override
     public String getRequestMethod() {
-        return HttpStringController.POST;
+        return HttpStringResponseController.POST;
     }
 
 }

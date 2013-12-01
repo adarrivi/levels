@@ -16,7 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.levels.http.controller.HttpStringController;
+import com.levels.http.controller.HttpStringResponseController;
 
 public class HttpHighScoreServerIntegrationTest {
 
@@ -77,7 +77,7 @@ public class HttpHighScoreServerIntegrationTest {
     private void requestGet(String urlPath) throws IOException {
         URL url = new URL(urlPath);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod(HttpStringController.GET);
+        connection.setRequestMethod(HttpStringResponseController.GET);
         readResponse(connection);
     }
 
@@ -98,7 +98,7 @@ public class HttpHighScoreServerIntegrationTest {
     private void requestPost(String urlPath, String postContent) throws IOException {
         URL url = new URL(urlPath);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod(HttpStringController.POST);
+        connection.setRequestMethod(HttpStringResponseController.POST);
         connection.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
         wr.writeBytes(postContent);

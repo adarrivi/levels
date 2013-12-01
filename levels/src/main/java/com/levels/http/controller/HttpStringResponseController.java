@@ -2,14 +2,12 @@ package com.levels.http.controller;
 
 import java.util.Map;
 
-import com.sun.net.httpserver.HttpExchange;
-
-public interface HttpStringController {
+public interface HttpStringResponseController {
 
     String GET = "GET";
     String POST = "POST";
 
-    String processRequest(HttpExchange exchange, Map<String, Object> parameters);
+    String processRequest(Map<String, String> urlParameters, Integer postBody, int integerFromUrl);
 
     String getUrlRegexPattern();
 

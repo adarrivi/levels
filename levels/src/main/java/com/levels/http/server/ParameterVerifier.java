@@ -1,17 +1,16 @@
-package com.levels.http.controller;
+package com.levels.http.server;
 
 import com.levels.exception.InvalidParameterException;
 
-public class ParameterVerifier {
+class ParameterVerifier {
 
     private static final String EMPTY = "";
 
     ParameterVerifier() {
-        // Only SingletonFactory (and Unit tests) should have access to the
-        // constructor
+        // Limiting scope, so it can be used only within server package
     }
 
-    public int getValueAsUnsignedInt(String value) {
+    int getValueAsUnsignedInt(String value) {
         if (value == null || EMPTY.equals(value)) {
             throw new InvalidParameterException("The integer cannot be empty");
         }

@@ -9,7 +9,6 @@ public class ControllerSingletonFactory {
     private LoginController LOGIN_CONTROLLER = new LoginController();
     private HighScoreController HIGH_SCORE_CONTROLLER = new HighScoreController();
     private UserScoreController USER_SCORE_CONTROLLER = new UserScoreController();
-    private ParameterVerifier PARAMETER_VERIFIER = new ParameterVerifier();
 
     public static ControllerSingletonFactory getInstance() {
         return INSTANCE;
@@ -23,28 +22,25 @@ public class ControllerSingletonFactory {
 
     private void setUpLoginController() {
         LOGIN_CONTROLLER.setLoginService(ServiceSingletonFactory.getInstance().getLoginService());
-        LOGIN_CONTROLLER.setParameterVerifier(PARAMETER_VERIFIER);
     }
 
     private void setUpHighScoreController() {
         HIGH_SCORE_CONTROLLER.setLevelScoreService(ServiceSingletonFactory.getInstance().getLevelScoreService());
-        HIGH_SCORE_CONTROLLER.setParameterVerifier(PARAMETER_VERIFIER);
     }
 
     private void setUpUserScoreController() {
         USER_SCORE_CONTROLLER.setLevelScoreService(ServiceSingletonFactory.getInstance().getLevelScoreService());
-        USER_SCORE_CONTROLLER.setParameterVerifier(PARAMETER_VERIFIER);
     }
 
-    public HttpStringController getLoginController() {
+    public HttpStringResponseController getLoginController() {
         return LOGIN_CONTROLLER;
     }
 
-    public HttpStringController getHighScoreController() {
+    public HttpStringResponseController getHighScoreController() {
         return HIGH_SCORE_CONTROLLER;
     }
 
-    public HttpStringController getUserScoreController() {
+    public HttpStringResponseController getUserScoreController() {
         return USER_SCORE_CONTROLLER;
     }
 }
