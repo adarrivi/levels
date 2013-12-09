@@ -4,6 +4,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import com.levels.dao.LevelScoreDao;
 import com.levels.dao.UserSessionDao;
+import com.levels.service.DateProvider;
 
 /**
  * Dao factory
@@ -17,8 +18,10 @@ public class DaoFactory {
     // Defines the maximum high scores allowed per level
     private static final int MAX_SCORES_PER_LEVEL = 15;
 
-    public UserSessionDao createUserSessionDao() {
-        return new UserSessionDaoInMemory();
+    public UserSessionDao createUserSessionDao(DateProvider dateProvider) {
+        UserSessionDaoInMemory userSessionDaoInMemory = new UserSessionDaoInMemory();
+        userSessionDaoInMemory.setDateProvider(dateProvider);
+        return userSessionDaoInMemory;
     }
 
     public LevelScoreDao createLevelScoreDao() {

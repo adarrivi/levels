@@ -2,24 +2,26 @@ package com.levels.dao.impl;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.levels.dao.LevelScoreDao;
 import com.levels.model.LevelHighScores;
 import com.levels.model.UserScore;
 
 /**
- * Singleton DAO class for the User's High Scores per level, keeping the results
- * stored in memory
+ * DAO class for the User's High Scores per level, keeping the results stored in
+ * memory
  * 
  * @author adarrivi
  * 
  */
-class LevelScoreDaoInMemory implements LevelScoreDao {
+@ThreadSafe
+final class LevelScoreDaoInMemory implements LevelScoreDao {
 
     private int maxHighScoresPerLevel;
-    private Map<Integer, LevelHighScores> highScoresMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, LevelHighScores> highScoresMap = new ConcurrentHashMap<>();
 
     LevelScoreDaoInMemory() {
         // Only Factory (and Unit tests) should have access to the
@@ -29,6 +31,11 @@ class LevelScoreDaoInMemory implements LevelScoreDao {
     // This method should be used only by Factory and Unit tests
     void setMaxHighScoresPerLevel(int maxHighScoresPerLevel) {
         this.maxHighScoresPerLevel = maxHighScoresPerLevel;
+    }
+
+    // This method should be used only by Unit tests
+    int getHishScoresMapSize() {
+        return highScoresMap.size();
     }
 
     @Override

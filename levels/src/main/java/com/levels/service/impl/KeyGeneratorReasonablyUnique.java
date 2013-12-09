@@ -2,15 +2,18 @@ package com.levels.service.impl;
 
 import java.util.Random;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import com.levels.service.KeyGenerator;
 
 /**
- * Singleton class that returns a 'Reasonably unique' and alphabetical random
- * identifier with 7 chars.
+ * Class that returns a 'Reasonably unique' and alphabetical random identifier
+ * with 7 chars.
  * 
  * @author adarrivi
  * 
  */
+@ThreadSafe
 class KeyGeneratorReasonablyUnique implements KeyGenerator {
 
     private static final int ID_LENGTH = 7;

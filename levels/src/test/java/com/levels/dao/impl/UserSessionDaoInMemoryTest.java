@@ -23,8 +23,6 @@ public class UserSessionDaoInMemoryTest {
 
     private static final int USER_ID = 100;
 
-    private static final int MAX_SESSIONS_ALLOWED = 5;
-
     private static final String SESSION_KEY = "UTDSFGK";
 
     @Mock
@@ -60,7 +58,7 @@ public class UserSessionDaoInMemoryTest {
 
     @Test
     public void saveOrUpdate_UnderMaxSessionLimit() {
-        givenSessionsPreLoaded(MAX_SESSIONS_ALLOWED - 1);
+        givenSessionsPreLoaded(10);
         givenNewSessionForUser();
         whenSaveOrUpdate();
     }

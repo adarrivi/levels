@@ -2,6 +2,8 @@ package com.levels.model;
 
 import java.util.Date;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * Holds together the userId and the session. This class is needed to simplify
  * the Service/DAO logic and to save accesses to DAO
@@ -9,6 +11,7 @@ import java.util.Date;
  * @author adarrivi
  * 
  */
+@NotThreadSafe
 public class UserIdSessionDto {
 
     private int userId;
@@ -25,6 +28,10 @@ public class UserIdSessionDto {
 
     public boolean hasExpired(Date currentDate) {
         return session.hasExpired(currentDate);
+    }
+
+    public String getKey() {
+        return session.getKey();
     }
 
 }

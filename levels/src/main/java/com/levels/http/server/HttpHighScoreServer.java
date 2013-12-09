@@ -54,13 +54,14 @@ public class HttpHighScoreServer {
     private static HttpRequestRouterHandler createRequestRouter() {
         HttpRequestRouterHandler requestRouter = new HttpRequestRouterHandler();
 
+        DateProvider dateProvider = new DateProvider();
         DaoFactory daoFactory = new DaoFactory();
         LevelScoreDao levelScoreDao = daoFactory.createLevelScoreDao();
-        UserSessionDao userSessionDao = daoFactory.createUserSessionDao();
+        UserSessionDao userSessionDao = daoFactory.createUserSessionDao(dateProvider);
 
         ServiceFactory serviceFactory = new ServiceFactory();
         KeyGenerator keyGenerator = serviceFactory.createKeyGenerator();
-        LoginService loginService = serviceFactory.createLoginService(userSessionDao, new DateProvider(), keyGenerator);
+        LoginService loginService = serviceFactory.createLoginService(userSessionDao, dateProvider, keyGenerator);
         LevelScoreService levelScoreService = serviceFactory.createLevelScoreService(loginService, levelScoreDao);
 
         ControllerFactory controllerFactory = new ControllerFactory();
