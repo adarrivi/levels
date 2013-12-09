@@ -34,12 +34,14 @@ final class LevelScoreDaoInMemory implements LevelScoreDao {
     }
 
     // This method should be used only by Unit tests
-    int getHishScoresMapSize() {
+    int getScoresMapSize() {
         return highScoresMap.size();
     }
 
     @Override
-    public void addScoreIfBelongsToHallOfFame(int level, int userId, int score) {
+    // The synchronisation of the method guarantees the data integrity of the
+    // operation
+    public synchronized void addScoreIfBelongsToHallOfFame(int level, int userId, int score) {
         LevelHighScores levelHighScores = highScoresMap.get(level);
         if (levelHighScores == null) {
             levelHighScores = new LevelHighScores(maxHighScoresPerLevel);

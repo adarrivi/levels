@@ -6,15 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Holds the highest users score per level.
+ * Holds the highest users score per level. Warning! This class is mutable and
+ * NOT THREAD SAFE! Thread-safe should be provided in upper levels!
  * 
  * @author adarrivi
  * 
  */
+@NotThreadSafe
 public class LevelHighScores {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelHighScores.class);
@@ -27,6 +31,14 @@ public class LevelHighScores {
         this.maxHighScoresPerLevel = maxHighScoresPerLevel;
     }
 
+    /**
+     * This method is not thread-safe (more specifically, concurrent access may
+     * get wrong results, as operations are not atomic nor the block is
+     * synchronised)
+     * 
+     * @param userId
+     * @param newScore
+     */
     public void addUserScoreIfBelongToHallOfFame(int userId, int newScore) {
         UserScore previousScoreForUser = userHighScoreMap.get(userId);
         if (previousScoreForUser != null && previousScoreForUser.getScore() < newScore) {
@@ -63,7 +75,15 @@ public class LevelHighScores {
         return scores.get(0);
     }
 
+    /**
+     * This method invocation is thread-safe
+     * 
+     * @return
+     */
     public List<UserScore> getSortedUserScoresAsc() {
+        // The iterator is a "weakly consistent" iterator that will never throw
+        // ConcurrentException when the map is modified, so concurrent
+        // executions along saveOrUpdate are thread-safe
         List<UserScore> scores = new ArrayList<>(userHighScoreMap.values());
         Collections.sort(scores);
         return scores;

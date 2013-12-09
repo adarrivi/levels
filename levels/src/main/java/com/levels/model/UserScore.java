@@ -1,11 +1,14 @@
 package com.levels.model;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * Defines one user score entity
  * 
  * @author adarrivi
  * 
  */
+@NotThreadSafe
 public class UserScore implements Comparable<UserScore> {
 
     private int userId;

@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * Represents a user session, with its creation date (useful for expiration
  * proposes)
@@ -11,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @author adarrivi
  * 
  */
+@NotThreadSafe
 public class UserSession {
 
     // Defines the maximum session life span.
