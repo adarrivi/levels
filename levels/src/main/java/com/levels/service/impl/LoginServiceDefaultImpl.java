@@ -21,21 +21,21 @@ class LoginServiceDefaultImpl implements LoginService {
     private UserSessionDao userSessionDao;
 
     LoginServiceDefaultImpl() {
-        // Only SingletonFactory (and Unit tests) should have access to the
+        // Only Factory (and Unit tests) should have access to the
         // constructor
     }
 
-    // This method should be used only by SingletonFactory and Unit tests
+    // This method should be used only by Factory and Unit tests
     void setDateProvider(DateProvider dateProvider) {
         this.dateProvider = dateProvider;
     }
 
-    // This method should be used only by SingletonFactory and Unit tests
+    // This method should be used only by Factory and Unit tests
     void setKeyGenerator(KeyGenerator keyGenerator) {
         this.keyGenerator = keyGenerator;
     }
 
-    // This method should be used only by SingletonFactory and Unit tests
+    // This method should be used only by Factory and Unit tests
     void setUserSessionDao(UserSessionDao userSessionDao) {
         this.userSessionDao = userSessionDao;
     }

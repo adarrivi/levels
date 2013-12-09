@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.levels.exception.InvalidParameterException;
-import com.levels.exception.MaxMemoryReachedException;
 import com.levels.http.controller.HttpStringResponseController;
 import com.levels.http.filter.ParameterFilter;
 import com.sun.net.httpserver.Headers;
@@ -67,11 +66,6 @@ class HttpRequestRouterHandler implements HttpHandler {
         } catch (InvalidParameterException ex) {
             LOG.error("Invalid parameter found in the request", ex);
             writeResponse(exchange, "Invalid parameter: " + ex.getMessage(), HttpURLConnection.HTTP_BAD_REQUEST);
-            return;
-        } catch (MaxMemoryReachedException ex) {
-            LOG.error("Maximum memory allocated limit reached: ", ex);
-            writeResponse(exchange, "The maximum memory allocated limit has been reached; cannot process the request",
-                    HttpURLConnection.HTTP_BAD_REQUEST);
             return;
         }
         LOG.error("{} Url not mapped: {}. Returning BadRequest", exchange.getRequestMethod(), exchange.getRequestURI());

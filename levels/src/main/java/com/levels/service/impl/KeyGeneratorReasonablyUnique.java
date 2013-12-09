@@ -18,7 +18,7 @@ class KeyGeneratorReasonablyUnique implements KeyGenerator {
     private static Random RANDOM = new Random();
 
     KeyGeneratorReasonablyUnique() {
-        // Only SingletonFactory (and Unit tests) should have access to the
+        // Only Factory (and Unit tests) should have access to the
         // constructor
     }
 

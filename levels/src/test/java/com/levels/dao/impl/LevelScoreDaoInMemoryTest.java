@@ -8,7 +8,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.levels.exception.MaxMemoryReachedException;
 import com.levels.model.UserScore;
 
 public class LevelScoreDaoInMemoryTest {
@@ -31,18 +30,6 @@ public class LevelScoreDaoInMemoryTest {
         victim.setMaxHighScoresPerLevel(5);
     }
 
-    @Test
-    public void addScoreIfBelongsToHallOfFame_MaxLevelsReached_ThrowEx() {
-        expectedException.expect(MaxMemoryReachedException.class);
-        givenMaxLevels(0);
-        givenScore(1, 1, 1);
-        whenAddScoreIfBelongsToHallOfFame();
-    }
-
-    private void givenMaxLevels(int maxLevels) {
-        victim.setMaxLevels(maxLevels);
-    }
-
     private void givenScore(int aLevel, int anUserId, int aScore) {
         level = aLevel;
         userId = anUserId;
@@ -55,7 +42,6 @@ public class LevelScoreDaoInMemoryTest {
 
     @Test
     public void getHighScoreListPerLevel_2SameLevel_ReturnsScores() {
-        givenMaxLevels(10);
         givenScore(1, 1, 10);
         whenAddScoreIfBelongsToHallOfFame();
         givenScore(1, 2, 20);
@@ -78,7 +64,6 @@ public class LevelScoreDaoInMemoryTest {
 
     @Test
     public void getHighScoreListPerLevel_2SameLevelWithOtherLevels_ReturnsScores() {
-        givenMaxLevels(10);
         givenScore(1, 1, 10);
         whenAddScoreIfBelongsToHallOfFame();
         givenScore(1, 2, 20);
@@ -96,7 +81,6 @@ public class LevelScoreDaoInMemoryTest {
 
     @Test
     public void getHighScoreListPerLevel_EmptyLevel_ReturnsEmpty() {
-        givenMaxLevels(0);
         whenGetHighScoreListPerLevel();
         thenHighScoresShouldBeEmpty();
     }

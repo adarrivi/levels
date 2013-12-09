@@ -3,11 +3,21 @@ package com.levels.http.server;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.levels.http.controller.ControllerSingletonFactory;
+import com.levels.dao.LevelScoreDao;
+import com.levels.dao.UserSessionDao;
+import com.levels.dao.impl.DaoFactory;
+import com.levels.http.controller.ControllerFactory;
 import com.levels.http.filter.ParameterFilter;
+import com.levels.service.DateProvider;
+import com.levels.service.KeyGenerator;
+import com.levels.service.LevelScoreService;
+import com.levels.service.LoginService;
+import com.levels.service.impl.ServiceFactory;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
@@ -17,6 +27,7 @@ import com.sun.net.httpserver.HttpServer;
  * @author adarrivi
  * 
  */
+@NotThreadSafe
 public class HttpHighScoreServer {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpHighScoreServer.class);
@@ -42,10 +53,22 @@ public class HttpHighScoreServer {
 
     private static HttpRequestRouterHandler createRequestRouter() {
         HttpRequestRouterHandler requestRouter = new HttpRequestRouterHandler();
+
+        DaoFactory daoFactory = new DaoFactory();
+        LevelScoreDao levelScoreDao = daoFactory.createLevelScoreDao();
+        UserSessionDao userSessionDao = daoFactory.createUserSessionDao();
+
+        ServiceFactory serviceFactory = new ServiceFactory();
+        KeyGenerator keyGenerator = serviceFactory.createKeyGenerator();
+        LoginService loginService = serviceFactory.createLoginService(userSessionDao, new DateProvider(), keyGenerator);
+        LevelScoreService levelScoreService = serviceFactory.createLevelScoreService(loginService, levelScoreDao);
+
+        ControllerFactory controllerFactory = new ControllerFactory();
+        requestRouter.addController(controllerFactory.createLoginController(loginService));
+        requestRouter.addController(controllerFactory.createHighScoreController(levelScoreService));
+        requestRouter.addController(controllerFactory.createUserScoreController(levelScoreService));
+
         requestRouter.setParameterVerifier(new ParameterVerifier());
-        requestRouter.addController(ControllerSingletonFactory.getInstance().getLoginController());
-        requestRouter.addController(ControllerSingletonFactory.getInstance().getHighScoreController());
-        requestRouter.addController(ControllerSingletonFactory.getInstance().getUserScoreController());
         return requestRouter;
     }
 

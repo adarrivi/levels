@@ -16,11 +16,11 @@ class LoginController implements HttpStringResponseController {
     private LoginService loginService;
 
     LoginController() {
-        // Only SingletonFactory (and Unit tests) should have access to the
+        // Only Factory (and Unit tests) should have access to the
         // constructor
     }
 
-    // This method should be used only by SingletonFactory and Unit tests
+    // This method should be used only by Factory and Unit tests
     void setLoginService(LoginService loginService) {
         this.loginService = loginService;
     }

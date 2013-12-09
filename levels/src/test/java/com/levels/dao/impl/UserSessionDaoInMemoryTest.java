@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.levels.exception.MaxMemoryReachedException;
 import com.levels.model.UserIdSessionDto;
 import com.levels.model.UserSession;
 
@@ -45,15 +44,6 @@ public class UserSessionDaoInMemoryTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        victim.setMaxUserSessionAllowed(MAX_SESSIONS_ALLOWED);
-    }
-
-    @Test
-    public void saveOrUpdate_OverMaxSessionLimit_ThrowsEx() {
-        expectedException.expect(MaxMemoryReachedException.class);
-        givenSessionsPreLoaded(MAX_SESSIONS_ALLOWED);
-        givenNewSessionForUser();
-        whenSaveOrUpdate();
     }
 
     private void givenSessionsPreLoaded(int sessions) {
