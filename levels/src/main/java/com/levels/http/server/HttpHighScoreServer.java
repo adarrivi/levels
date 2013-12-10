@@ -2,6 +2,7 @@ package com.levels.http.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -46,6 +47,8 @@ public class HttpHighScoreServer {
 
     private static void initializeServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress(HTTP_PORT), 0);
+        // Adding multi-thread pool
+        server.setExecutor(Executors.newCachedThreadPool());
         HttpRequestRouterHandler requestRouter = createRequestRouter();
         HttpContext context = server.createContext("/", requestRouter);
         context.getFilters().add(new ParameterFilter());

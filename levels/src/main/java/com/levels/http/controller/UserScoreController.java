@@ -2,6 +2,8 @@ package com.levels.http.controller;
 
 import java.util.Map;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import com.levels.exception.InvalidParameterException;
 import com.levels.service.LevelScoreService;
 
@@ -12,6 +14,7 @@ import com.levels.service.LevelScoreService;
  * @author adarrivi
  * 
  */
+@ThreadSafe
 class UserScoreController implements HttpStringResponseController {
 
     private static final String SESSIONKEY_PARAMETER = "sessionkey";

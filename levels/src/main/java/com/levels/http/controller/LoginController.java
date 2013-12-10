@@ -2,6 +2,8 @@ package com.levels.http.controller;
 
 import java.util.Map;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import com.levels.service.LoginService;
 
 /**
@@ -11,6 +13,7 @@ import com.levels.service.LoginService;
  * @author adarrivi
  * 
  */
+@ThreadSafe
 class LoginController implements HttpStringResponseController {
 
     private LoginService loginService;

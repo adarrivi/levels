@@ -64,7 +64,7 @@ class HttpRequestRouterHandler implements HttpHandler {
                 }
             }
         } catch (InvalidParameterException ex) {
-            LOG.error("Invalid parameter found in the request", ex);
+            // LOG.error("Invalid parameter found in the request", ex);
             writeResponse(exchange, "Invalid parameter: " + ex.getMessage(), HttpURLConnection.HTTP_BAD_REQUEST);
             return;
         }

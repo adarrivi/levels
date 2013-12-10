@@ -2,6 +2,8 @@ package com.levels.http.controller;
 
 import java.util.Map;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 import com.levels.service.LevelScoreService;
 
 /**
@@ -11,6 +13,7 @@ import com.levels.service.LevelScoreService;
  * @author adarrivi
  * 
  */
+@ThreadSafe
 class HighScoreController implements HttpStringResponseController {
 
     private LevelScoreService levelScoreService;
