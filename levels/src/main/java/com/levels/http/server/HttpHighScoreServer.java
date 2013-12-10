@@ -13,13 +13,11 @@ import com.levels.dao.LevelScoreDao;
 import com.levels.dao.UserSessionDao;
 import com.levels.dao.impl.DaoFactory;
 import com.levels.http.controller.ControllerFactory;
-import com.levels.http.filter.ParameterFilter;
 import com.levels.service.DateProvider;
 import com.levels.service.KeyGenerator;
 import com.levels.service.LevelScoreService;
 import com.levels.service.LoginService;
 import com.levels.service.impl.ServiceFactory;
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 
 /**
@@ -50,8 +48,7 @@ public class HttpHighScoreServer {
         // Adding multi-thread pool
         server.setExecutor(Executors.newCachedThreadPool());
         HttpRequestRouterHandler requestRouter = createRequestRouter();
-        HttpContext context = server.createContext("/", requestRouter);
-        context.getFilters().add(new ParameterFilter());
+        server.createContext("/", requestRouter);
     }
 
     private static HttpRequestRouterHandler createRequestRouter() {
@@ -72,7 +69,12 @@ public class HttpHighScoreServer {
         requestRouter.addController(controllerFactory.createHighScoreController(levelScoreService));
         requestRouter.addController(controllerFactory.createUserScoreController(levelScoreService));
 
-        requestRouter.setParameterVerifier(new ParameterVerifier());
+        ParameterVerifier parameterVerifier = new ParameterVerifier();
+        HttpExchangeParameterHelper httpExchangeParameterHelper = new HttpExchangeParameterHelper();
+        httpExchangeParameterHelper.setParameterVerifier(parameterVerifier);
+
+        requestRouter.setHttpExchangeParameterHelper(httpExchangeParameterHelper);
+
         return requestRouter;
     }
 

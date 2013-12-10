@@ -14,16 +14,18 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.levels.http.controller.HttpStringResponseController;
 import com.levels.util.ConcurrentExecutor;
 
+@Ignore
 public class MultipleRequestIntegrationTest {
 
-    private static final int CONCURRENT_THREADS = 10;
+    private static final int CONCURRENT_THREADS = 20;
     private static final int USERS = 20;
-    private static final int LEVELS = 5;
+    private static final int LEVELS = 3;
     private ExecutorService executorSerivce;
 
     @BeforeClass
@@ -66,7 +68,8 @@ public class MultipleRequestIntegrationTest {
                     try {
                         String sessionKey = requestGet("http://localhost:8081/" + userId + "/login");
                         String scoreUrl = "http://localhost:8081/" + level + "/score?sessionkey=";
-                        requestPost(scoreUrl + sessionKey, Integer.toString(userId * 10));
+                        String score = Integer.toString(userId * 10);
+                        requestPost(scoreUrl + sessionKey, score);
                     } catch (IOException ex) {
                         // Nothing to do
                     }

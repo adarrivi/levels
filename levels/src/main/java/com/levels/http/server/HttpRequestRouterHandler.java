@@ -3,20 +3,19 @@ package com.levels.http.server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.levels.exception.InvalidParameterException;
 import com.levels.http.controller.HttpStringResponseController;
-import com.levels.http.filter.ParameterFilter;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -28,25 +27,27 @@ import com.sun.net.httpserver.HttpHandler;
  * @author adarrivi
  * 
  */
+@NotThreadSafe
 class HttpRequestRouterHandler implements HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpRequestRouterHandler.class);
 
     private List<HttpStringResponseController> controllers = new ArrayList<>();
-    private ParameterVerifier parameterVerifier;
+
+    private HttpExchangeParameterHelper httpExchangeParameterHelper;
 
     HttpRequestRouterHandler() {
         // Limiting scope, so it can be used only within server package
     }
 
     // Limiting scope, so it can be used only within server package
-    void setParameterVerifier(ParameterVerifier parameterVerifier) {
-        this.parameterVerifier = parameterVerifier;
+    void addController(HttpStringResponseController controller) {
+        controllers.add(controller);
     }
 
     // Limiting scope, so it can be used only within server package
-    void addController(HttpStringResponseController controller) {
-        controllers.add(controller);
+    void setHttpExchangeParameterHelper(HttpExchangeParameterHelper httpExchangeParameterHelper) {
+        this.httpExchangeParameterHelper = httpExchangeParameterHelper;
     }
 
     @Override
@@ -64,7 +65,7 @@ class HttpRequestRouterHandler implements HttpHandler {
                 }
             }
         } catch (InvalidParameterException ex) {
-            // LOG.error("Invalid parameter found in the request", ex);
+            LOG.debug("Invalid parameter found in the request", ex);
             writeResponse(exchange, "Invalid parameter: " + ex.getMessage(), HttpURLConnection.HTTP_BAD_REQUEST);
             return;
         }
@@ -82,28 +83,11 @@ class HttpRequestRouterHandler implements HttpHandler {
         return matcher.matches();
     }
 
-    @SuppressWarnings("unchecked")
     private void writeResponseFromController(HttpExchange exchange, HttpStringResponseController controller) {
-        Integer postBodyAsInteger = getPostBodyAsInteger(exchange);
-        Map<String, String> urlParameters = (Map<String, String>) exchange.getAttribute(ParameterFilter.URL_PARAMETERS_TAG);
-        int integerFromUrl = getIntegerFromURI(exchange.getRequestURI());
-        String response = controller.processRequest(urlParameters, postBodyAsInteger, integerFromUrl);
+        RequestParameter requestParameters = httpExchangeParameterHelper.retrieveParameters(exchange);
+        String response = controller.processRequest(requestParameters.getUrlParameters(), requestParameters.getPostBody(),
+                requestParameters.getIntegerFromUrl());
         writeResponse(exchange, response, HttpURLConnection.HTTP_OK);
-    }
-
-    private Integer getPostBodyAsInteger(HttpExchange exchange) {
-        String postBody = (String) exchange.getAttribute(ParameterFilter.POST_BODY_TAG);
-        if (postBody == null || "".equals(postBody)) {
-            return null;
-        }
-        return parameterVerifier.getValueAsUnsignedInt(postBody);
-    }
-
-    private int getIntegerFromURI(URI uri) {
-        Pattern pattern = Pattern.compile("\\d+");
-        Matcher matcher = pattern.matcher(uri.toString());
-        matcher.find();
-        return parameterVerifier.getValueAsUnsignedInt(matcher.group());
     }
 
     private void writeResponse(HttpExchange exchange, String content, int status) {
